@@ -1,2 +1,42 @@
+# config.yaml
 prowjob_namespace: default
 pod_namespace: test-pods
+
+plank:
+  default_decoration_config:
+    utility_images:
+      clonerefs: "gcr.io/k8s-prow/clonerefs:v20190619-25afbb545"
+      initupload: "gcr.io/k8s-prow/initupload:v20190619-25afbb545"
+      entrypoint: "gcr.io/k8s-prow/entrypoint:v20190619-25afbb545"
+      sidecar: "gcr.io/k8s-prow/sidecar:v20190619-25afbb545"
+    gcs_configuration:
+      bucket: bashfire-prow
+      path_strategy: explicit
+    gcs_credentials_secret: gcs-credentials
+
+periodics:
+- interval: 10m
+  name: echo-test
+  decorate: true
+  spec:
+    containers:
+    - image: alpine
+      command: ["/bin/date"]
+postsubmits:
+  bashfire/prow-config:
+  - name: test-postsubmit
+    decorate: true
+    spec:
+      containers:
+      - image: alpine
+        command: ["/bin/printenv"]
+presubmits:
+  bashfire/prow-config:
+  - name: test-presubmit
+    decorate: true
+    always_run: true
+    skip_report: true
+    spec:
+      containers:
+      - image: alpine
+        command: ["/bin/printenv"]
