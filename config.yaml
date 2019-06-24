@@ -54,9 +54,9 @@ presubmits:
       containers:
       - image: gcr.io/k8s-testimages/gcloud-in-go:v20190125-cc5d6ecff3
         args:
-        - "--repo=k8s.io/$(REPO_NAME)=$(PULL_REFS)"
+        - "--repo=bashfire/$(REPO_NAME)=$(PULL_REFS)"
         - "--root=/go/src"
-        - "--upload=gs://kubernetes-jenkins/pr-logs"
+        - "--upload=gs://bashfire-prow/pr-logs"
         - --scenario=execute
         - --
         - make
