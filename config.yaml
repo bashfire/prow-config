@@ -22,6 +22,7 @@ periodics:
     containers:
     - image: alpine
       command: ["/bin/date"]
+
 postsubmits:
   bashfire/prow-config:
   - name: test-postsubmit
@@ -30,6 +31,7 @@ postsubmits:
       containers:
       - image: alpine
         command: ["/bin/printenv"]
+
 presubmits:
   bashfire/prow-config:
   - name: test-presubmit
@@ -40,3 +42,42 @@ presubmits:
       containers:
       - image: alpine
         command: ["/bin/printenv"]
+  # TODO(spiffxp): remove when done hacking with pull-community-verify
+  bashfire/community:
+  - name: pull-community-verify
+    branches:
+    - master
+    always_run: true
+    labels:
+      preset-service-account: "true"
+    spec:
+      containers:
+      - image: gcr.io/k8s-testimages/gcloud-in-go:v20190125-cc5d6ecff3
+        args:
+        - "--repo=k8s.io/$(REPO_NAME)=$(PULL_REFS)"
+        - "--root=/go/src"
+        - "--upload=gs://kubernetes-jenkins/pr-logs"
+        - --scenario=execute
+        - --
+        - make
+        - verify
+
+presets:
+# TODO(spiffxp): remove when done hacking with pull-community-verify
+- labels:
+    preset-service-account: "true"
+  env:
+  - name: GOOGLE_APPLICATION_CREDENTIALS
+    value: /etc/service-account/service-account.json
+  # storage e2e tests borrow this as a preconfigured key instead of creating and
+  # injecting a new key. this allows us to avoid mass key download warnings
+  - name: E2E_GOOGLE_APPLICATION_CREDENTIALS
+    value: /etc/service-account/service-account.json
+  volumes:
+  - name: service
+    secret:
+      secretName: service-account
+  volumeMounts:
+  - name: service
+    mountPath: /etc/service-account
+    readOnly: true
