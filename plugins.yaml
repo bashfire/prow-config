@@ -13,9 +13,16 @@ config_updater:
 # which plugins should be enabled for which orgs or org/repos
 plugins:
   bashfire:
+  - assign
   - cat
+  - dog
+  - label
+  - lifecycle
+  - pony
+  - shrug
   - size
   - trigger
+  - yuks
 
   bashfire/prow-config:
   - config-updater

@@ -49,31 +49,10 @@ presubmits:
     - ^master$
     always_run: true
     decorate: true
-    path_alias: k8s.io/community
     spec:
       containers:
-      - image: golang:1.11
+      - image: golang:1.12.5
         command:
         - sh
         - "-c"
         - "export PATH=$PATH:$GOPATH/bin && make verify"
-
-presets:
-# TODO(spiffxp): remove when done hacking with pull-community-verify
-- labels:
-    preset-service-account: "true"
-  env:
-  - name: GOOGLE_APPLICATION_CREDENTIALS
-    value: /etc/service-account/service-account.json
-  # storage e2e tests borrow this as a preconfigured key instead of creating and
-  # injecting a new key. this allows us to avoid mass key download warnings
-  - name: E2E_GOOGLE_APPLICATION_CREDENTIALS
-    value: /etc/service-account/service-account.json
-  volumes:
-  - name: service
-    secret:
-      secretName: service-account
-  volumeMounts:
-  - name: service
-    mountPath: /etc/service-account
-    readOnly: true
