@@ -46,21 +46,17 @@ presubmits:
   bashfire/community:
   - name: pull-community-verify
     branches:
-    - master
+    - ^master$
     always_run: true
-    labels:
-      preset-service-account: "true"
+    decorate: true
+    path_alias: k8s.io/community
     spec:
       containers:
-      - image: gcr.io/k8s-testimages/gcloud-in-go:v20190125-cc5d6ecff3
-        args:
-        - "--repo=bashfire/$(REPO_NAME)=$(PULL_REFS)"
-        - "--root=/go/src"
-        - "--upload=gs://bashfire-prow/pr-logs"
-        - --scenario=execute
-        - --
-        - make
-        - verify
+      - image: golang:1.11
+        command:
+        - sh
+        - "-c"
+        - "export PATH=$PATH:$GOPATH/bin && make verify"
 
 presets:
 # TODO(spiffxp): remove when done hacking with pull-community-verify
