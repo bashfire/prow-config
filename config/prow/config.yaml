@@ -14,6 +14,27 @@ plank:
       path_strategy: explicit
     gcs_credentials_secret: gcs-credentials
 
+github_reporter:
+  job_types_to_report:
+  - presubmit
+  - postsubmit
+
+branch-protection:
+  orgs:
+    bashfire:
+      protect: true
+
+tide:
+  sync_period: 1m
+  queries:
+  - orgs:
+    - bashfire
+    labels:
+    - lgtm
+    missingLabels:
+    - do-not-merge/hold
+    - do-not-merge/work-in-progress
+
 periodics:
 - interval: 10m
   name: echo-test
