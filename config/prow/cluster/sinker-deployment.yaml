@@ -18,12 +18,12 @@ spec:
       serviceAccountName: sinker
       containers:
       - name: sinker
-        image: gcr.io/k8s-prow/sinker:v20190620-f4e6553b2
+        image: gcr.io/k8s-prow/sinker:v20200423-af610499d
         imagePullPolicy: IfNotPresent
         args:
         - --config-path=/etc/config/config.yaml
-        - --job-config-path=/etc/job-config
         - --dry-run=false
+        - --job-config-path=/etc/job-config
         volumeMounts:
         - mountPath: /etc/config
           name: config
