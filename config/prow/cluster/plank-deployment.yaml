@@ -24,9 +24,10 @@ spec:
         image: gcr.io/k8s-prow/plank:v20200423-af610499d
         imagePullPolicy: IfNotPresent
         args:
-        - --dry-run=false
         - --config-path=/etc/config/config.yaml
+        - --dry-run=false
         - --job-config-path=/etc/job-config
+        - --skip-report=true
         volumeMounts:
         - mountPath: /etc/github
           name: oauth

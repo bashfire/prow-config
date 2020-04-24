@@ -22,8 +22,8 @@ spec:
         imagePullPolicy: IfNotPresent
         args:
         - --config-path=/etc/config/config.yaml
-        - --job-config-path=/etc/job-config
         - --dry-run=false
+        - --job-config-path=/etc/job-config
         volumeMounts:
         - mountPath: /etc/config
           name: config
