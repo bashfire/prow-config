@@ -15,7 +15,6 @@ spec:
       labels:
         app: sinker
     spec:
-      serviceAccount: sinker
       serviceAccountName: sinker
       containers:
       - name: sinker

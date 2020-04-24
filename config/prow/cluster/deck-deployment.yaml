@@ -20,7 +20,6 @@ spec:
       labels:
         app: deck
     spec:
-      serviceAccount: deck
       serviceAccountName: deck
       terminationGracePeriodSeconds: 30
       containers:

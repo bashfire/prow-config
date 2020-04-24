@@ -17,7 +17,6 @@ spec:
       labels:
         app: tide
     spec:
-      serviceAccount: tide
       serviceAccountName: tide
       containers:
       - name: tide
