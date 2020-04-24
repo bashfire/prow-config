@@ -92,3 +92,9 @@ deck:
     '*':
       github_users:
       - spiffxp
+
+presets:
+# enable GOPROXY by default
+- env:
+  - name: GOPROXY
+    value: "https://proxy.golang.org"
