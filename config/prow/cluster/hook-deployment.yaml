@@ -24,7 +24,6 @@ spec:
       labels:
         app: hook
     spec:
-      serviceAccount: hook
       serviceAccountName: hook
       terminationGracePeriodSeconds: 180
       containers:

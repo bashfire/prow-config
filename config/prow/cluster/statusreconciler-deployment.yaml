@@ -15,7 +15,6 @@ spec:
       labels:
         app: statusreconciler
     spec:
-      serviceAccount: statusreconciler
       serviceAccountName: statusreconciler
       terminationGracePeriodSeconds: 180
       containers:
