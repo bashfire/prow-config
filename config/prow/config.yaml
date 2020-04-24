@@ -55,6 +55,10 @@ tide:
     '*': https://prow.bashfire.dev/pr
 
 deck:
+  branding:
+    logo: 'http://storage.googleapis.com/bashfire-prow/bashfire.png'
+    favicon: 'http://storage.googleapis.com/bashfire-prow/bashfire.ico'
+    header_color: '#212121'
   spyglass:
     size_limit: 200000000 # 200MB
     lenses:
