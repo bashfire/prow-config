@@ -26,6 +26,13 @@ check-config:
 	docker run -v $(CWD)/config/prow:/prow $(REPO)/checkconfig:$(TAG) \
 		--config-path /prow/config.yaml \
 		--plugin-config /prow/plugins.yaml \
-		--strict
+		--strict \
+		--warnings=mismatched-tide-lenient \
+		--warnings=tide-strict-branch \
+		--warnings=needs-ok-to-test \
+		--warnings=validate-owners \
+		--warnings=missing-trigger \
+		--warnings=validate-urls \
+		--warnings=unknown-fields
 
 .PHONY: check-config
