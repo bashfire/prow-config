@@ -1,10 +1,15 @@
 presubmits:
   bashfire/prow-config:
-  - name: test-presubmit2
+  - name: pull-prow-config-checkconfig
     decorate: true
-    always_run: true
-    skip_report: false
+    run_if_changed: '^(config/prow/(config|plugins).yaml$|config/jobs/.*.yaml$)'
+    optional: true
     spec:
       containers:
-      - image: alpine
-        command: ["/bin/printenv"]
+      - image: gcr.io/k8s-prow/checkconfig:v20200423-af610499d
+        command:
+        - /checkconfig
+        args:
+        - --config-path=config/prow/config.yaml
+        - --plugin-config=config/prow/plugins.yaml
+        - --strict
