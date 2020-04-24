@@ -38,7 +38,7 @@ spec:
         - --github-oauth-config-file=/etc/githuboauth/secret
         - --github-token-path=/etc/github/oauth
         - --job-config-path=/etc/job-config
-        # - --kubeconfig=/etc/kubeconfig/config
+        - --kubeconfig=/etc/kubeconfig/config
         - --oauth-url=/github-login
         - --plugin-config=/etc/plugins/plugins.yaml
         - --redirect-http-to=prow.bashfire.dev
@@ -51,6 +51,9 @@ spec:
           readOnly: true
         - name: cookie-secret
           mountPath: /etc/cookie
+          readOnly: true
+        - mountPath: /etc/kubeconfig
+          name: kubeconfig
           readOnly: true
         - name: config
           mountPath: /etc/config
@@ -87,6 +90,10 @@ spec:
       - name: cookie-secret
         secret:
           secretName: cookie
+      - name: kubeconfig
+        secret:
+          defaultMode: 420
+          secretName: kubeconfig
       - name: config
         configMap:
           name: config
