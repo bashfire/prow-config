@@ -37,22 +37,8 @@ presubmits:
   - name: test-presubmit
     decorate: true
     always_run: true
-    skip_report: true
+    skip_report: false
     spec:
       containers:
       - image: alpine
         command: ["/bin/printenv"]
-  # TODO(spiffxp): remove when done hacking with pull-community-verify
-  bashfire/community:
-  - name: pull-community-verify
-    branches:
-    - ^master$
-    always_run: true
-    decorate: true
-    spec:
-      containers:
-      - image: golang:1.12.5
-        command:
-        - sh
-        - "-c"
-        - "export PATH=$PATH:$GOPATH/bin && make verify"
