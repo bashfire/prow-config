@@ -1,41 +1,33 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
+  namespace: default
+  name: statusreconciler
   labels:
     app: statusreconciler
-  name: statusreconciler
-  namespace: default
 spec:
   replicas: 1
-  revisionHistoryLimit: 10
   selector:
     matchLabels:
       app: statusreconciler
-  strategy:
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 1
-    type: RollingUpdate
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: statusreconciler
     spec:
+      serviceAccount: statusreconciler
+      serviceAccountName: statusreconciler
+      terminationGracePeriodSeconds: 180
       containers:
-      - args:
+      - name: statusreconciler
+        image: gcr.io/k8s-prow/status-reconciler:v20200423-af610499d
+        imagePullPolicy: Always
+        args:
         - --dry-run=false
         - --continue-on-error=true
         - --plugin-config=/etc/plugins/plugins.yaml
         - --config-path=/etc/config/config.yaml
         - --github-token-path=/etc/github/oauth
-        image: gcr.io/k8s-prow/status-reconciler:v20190620-f4e6553b2
-        imagePullPolicy: IfNotPresent
-        name: statusreconciler
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
         volumeMounts:
         - mountPath: /etc/github
           name: oauth
@@ -46,23 +38,13 @@ spec:
         - mountPath: /etc/plugins
           name: plugins
           readOnly: true
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      serviceAccount: statusreconciler
-      serviceAccountName: statusreconciler
-      terminationGracePeriodSeconds: 180
       volumes:
       - name: oauth
         secret:
-          defaultMode: 420
           secretName: oauth-token
-      - configMap:
-          defaultMode: 420
+      - name: config
+        configMap:
           name: config
-        name: config
-      - configMap:
-          defaultMode: 420
+      - name: plugins
+        configMap:
           name: plugins
-        name: plugins

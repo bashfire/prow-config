@@ -1,59 +1,45 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
+  namespace: default
+  name: tide
   labels:
     app: tide
-  name: tide
-  namespace: default
 spec:
-  replicas: 1
-  revisionHistoryLimit: 10
+  replicas: 1 # Do not scale up.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: tide
-  strategy:
-    type: Recreate
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: tide
     spec:
-      containers:
-      - args:
-        - --dry-run=false
-        - --config-path=/etc/config/config.yaml
-        image: gcr.io/k8s-prow/tide:v20190620-f4e6553b2
-        imagePullPolicy: IfNotPresent
-        name: tide
-        ports:
-        - containerPort: 8888
-          name: http
-          protocol: TCP
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
-        volumeMounts:
-        - mountPath: /etc/github
-          name: oauth
-          readOnly: true
-        - mountPath: /etc/config
-          name: config
-          readOnly: true
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
       serviceAccount: tide
       serviceAccountName: tide
-      terminationGracePeriodSeconds: 30
+      containers:
+      - name: tide
+        image: gcr.io/k8s-prow/tide:v20190620-f4e6553b2
+        imagePullPolicy: IfNotPresent
+        args:
+        - --dry-run=false
+        - --config-path=/etc/config/config.yaml
+        ports:
+        - name: http
+          containerPort: 8888
+        volumeMounts:
+        - name: oauth
+          mountPath: /etc/github
+          readOnly: true
+        - name: config
+          mountPath: /etc/config
+          readOnly: true
       volumes:
       - name: oauth
         secret:
-          defaultMode: 420
           secretName: oauth-token
-      - configMap:
-          defaultMode: 420
+      - name: config
+        configMap:
           name: config
-        name: config

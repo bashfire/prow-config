@@ -1,62 +1,48 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
+  namespace: default
+  name: hook
   labels:
     app: hook
-  name: hook
-  namespace: default
 spec:
   replicas: 2
-  revisionHistoryLimit: 10
-  selector:
-    matchLabels:
-      app: hook
   strategy:
+    type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 1
-    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: hook
   template:
     metadata:
-      creationTimestamp: null
+      labels:
+        app: hook
+  template:
+    metadata:
       labels:
         app: hook
     spec:
+      serviceAccount: hook
+      serviceAccountName: hook
+      terminationGracePeriodSeconds: 180
       containers:
-      - args:
-        - --dry-run=false
-        - --config-path=/etc/config/config.yaml
+      - name: hook
         image: gcr.io/k8s-prow/hook:v20190620-f4e6553b2
         imagePullPolicy: Always
+        args:
+        - --dry-run=false
+        - --config-path=/etc/config/config.yaml
+        ports:
+          - name: http
+            containerPort: 8888
         livenessProbe:
-          failureThreshold: 3
           httpGet:
             path: /healthz
             port: 8081
-            scheme: HTTP
           initialDelaySeconds: 3
           periodSeconds: 3
-          successThreshold: 1
-          timeoutSeconds: 1
-        name: hook
-        ports:
-        - containerPort: 8888
-          name: http
-          protocol: TCP
-        readinessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /healthz/ready
-            port: 8081
-            scheme: HTTP
-          initialDelaySeconds: 10
-          periodSeconds: 3
-          successThreshold: 1
-          timeoutSeconds: 600
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File
         volumeMounts:
         - mountPath: /etc/webhook
           name: hmac
@@ -70,27 +56,24 @@ spec:
         - mountPath: /etc/plugins
           name: plugins
           readOnly: true
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      serviceAccount: hook
-      serviceAccountName: hook
+        readinessProbe:
+          httpGet:
+            path: /healthz/ready
+            port: 8081
+          initialDelaySeconds: 10
+          periodSeconds: 3
+          timeoutSeconds: 600
       terminationGracePeriodSeconds: 180
       volumes:
       - name: hmac
         secret:
-          defaultMode: 420
           secretName: hmac-token
       - name: oauth
         secret:
-          defaultMode: 420
           secretName: oauth-token
-      - configMap:
-          defaultMode: 420
+      - name: config
+        configMap:
           name: config
-        name: config
-      - configMap:
-          defaultMode: 420
+      - name: plugins
+        configMap:
           name: plugins
-        name: plugins
