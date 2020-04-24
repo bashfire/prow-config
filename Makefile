@@ -5,7 +5,7 @@ CLUSTER ?= prow
 
 # prow docker image variables
 REPO ?= gcr.io/k8s-prow
-TAG ?= v20190620-f4e6553b2
+TAG ?= v20200423-af610499d
 
 CWD = $(shell pwd)
 
