@@ -5,10 +5,11 @@
 # config-updater
 # update prow cluster's configmaps from the repo with this plugin enabled; assumed to be a single repo
 config_updater:
-  # path to config.yaml relative to root of repo (default: prow/config.yaml)
-  config_file: config.yaml
-  # path to plugin.yaml relative to root of repo (default: prow/config.yaml)
-  plugin_file: plugins.yaml
+  maps:
+    config/prow/config.yaml:
+      name: config
+    config/prow/plugins.yaml:
+      name: plugins
 
 # which plugins should be enabled for which orgs or org/repos
 plugins:
