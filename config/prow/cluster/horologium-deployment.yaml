@@ -24,12 +24,19 @@ spec:
         image: gcr.io/k8s-prow/horologium:v20190620-f4e6553b2
         args:
         - --config-path=/etc/config/config.yaml
+        - --job-config-path=/etc/job-config
         - --dry-run=false
         volumeMounts:
         - name: config
           mountPath: /etc/config
           readOnly: true
+        - name: job-config
+          mountPath: /etc/job-config
+          readOnly: true
       volumes:
       - name: config
         configMap:
           name: config
+      - name: job-config
+        configMap:
+          name: job-config

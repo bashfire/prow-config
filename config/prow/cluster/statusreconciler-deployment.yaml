@@ -27,6 +27,7 @@ spec:
         - --continue-on-error=true
         - --plugin-config=/etc/plugins/plugins.yaml
         - --config-path=/etc/config/config.yaml
+        - --job-config-path=/etc/job-config
         - --github-token-path=/etc/github/oauth
         volumeMounts:
         - mountPath: /etc/github
@@ -34,6 +35,9 @@ spec:
           readOnly: true
         - mountPath: /etc/config
           name: config
+          readOnly: true
+        - name: job-config
+          mountPath: /etc/job-config
           readOnly: true
         - mountPath: /etc/plugins
           name: plugins
@@ -45,6 +49,9 @@ spec:
       - name: config
         configMap:
           name: config
+      - name: job-config
+        configMap:
+          name: job-config
       - name: plugins
         configMap:
           name: plugins
