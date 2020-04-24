@@ -31,8 +31,10 @@ spec:
         image: gcr.io/k8s-prow/hook:v20200423-af610499d
         imagePullPolicy: Always
         args:
-        - --dry-run=false
         - --config-path=/etc/config/config.yaml
+        - --dry-run=false
+        - --github-endpoint=http://ghproxy
+        - --github-endpoint=https://api.github.com
         - --job-config-path=/etc/job-config
         ports:
           - name: http
