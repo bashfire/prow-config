@@ -13,3 +13,30 @@ presubmits:
         - --config-path=config/prow/config.yaml
         - --plugin-config=config/prow/plugins.yaml
         - --strict
+
+  - name: test-presubmit
+    decorate: true
+    always_run: true
+    skip_report: false
+    spec:
+      containers:
+      - image: alpine
+        command: ["/bin/printenv"]
+
+periodics:
+- interval: 10m
+  name: echo-test
+  decorate: true
+  spec:
+    containers:
+    - image: alpine
+      command: ["/bin/date"]
+
+postsubmits:
+  bashfire/prow-config:
+  - name: test-postsubmit
+    decorate: true
+    spec:
+      containers:
+      - image: alpine
+        command: ["/bin/printenv"]
