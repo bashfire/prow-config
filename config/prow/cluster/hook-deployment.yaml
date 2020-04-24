@@ -34,6 +34,7 @@ spec:
         args:
         - --dry-run=false
         - --config-path=/etc/config/config.yaml
+        - --job-config-path=/etc/job-config
         ports:
           - name: http
             containerPort: 8888
@@ -52,6 +53,9 @@ spec:
           readOnly: true
         - mountPath: /etc/config
           name: config
+          readOnly: true
+        - mountPath: /etc/job-config
+          name: job-config
           readOnly: true
         - mountPath: /etc/plugins
           name: plugins
@@ -74,6 +78,9 @@ spec:
       - name: config
         configMap:
           name: config
+      - name: job-config
+        configMap:
+          name: job-config
       - name: plugins
         configMap:
           name: plugins
