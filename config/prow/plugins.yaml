@@ -12,7 +12,6 @@ config_updater:
       name: plugins
     config/jobs/**/*.yaml:
       name: job-config
-      gzip: true
 
 # which plugins should be enabled for which orgs or org/repos
 plugins:
