@@ -98,3 +98,147 @@ presets:
 - env:
   - name: GOPROXY
     value: "https://proxy.golang.org"
+# TODO: ssh access?
+- labels:
+    preset-k8s-ssh: "true"
+  env:
+  - name: USER
+    value: prow
+  - name: JENKINS_GCE_SSH_PRIVATE_KEY_FILE
+    value: /etc/ssh-key-secret/ssh-private
+  - name: JENKINS_GCE_SSH_PUBLIC_KEY_FILE
+    value: /etc/ssh-key-secret/ssh-public
+  volumes:
+  - name: ssh
+    secret:
+      defaultMode: 0400
+      # TODO: see if we can use OS login instead of this
+      #   corresponds to a manually created ssh key
+      #   added to project-wide ssh-keys for e2e projects during project creation
+      #   on kubernetes-public/prow-build-test
+      secretName: ssh-key-secret
+  volumeMounts:
+  - name: ssh
+    mountPath: /etc/ssh-key-secret
+    readOnly: true
+- labels:
+    preset-service-account: "true"
+  env:
+  - name: GOOGLE_APPLICATION_CREDENTIALS
+    value: /etc/service-account/service-account.json
+  # storage e2e tests borrow this as a preconfigured key instead of creating and
+  # injecting a new key. this allows us to avoid mass key download warnings
+  - name: E2E_GOOGLE_APPLICATION_CREDENTIALS
+    value: /etc/service-account/service-account.json
+  - name: GOOGLE_APPLICATION_CREDENTIALS_DEPRECATED
+    value: "Migrate to workload identity, contact sig-testing"
+  volumes:
+  - name: service
+    secret:
+      # spiffxp-gke-dev-prow@spiffxp-gke-dev.iam.gserviceaccount.com spiffxp-gke-dev/prow
+      # prow-build-test@kubernetes-public.iam.gserviceaccount.com on kubernetes-public/prow-build-test
+      secretName: service-account
+  volumeMounts:
+  - name: service
+    mountPath: /etc/service-account
+    readOnly: true
+
+periodics:
+- name: ci-kubernetes-node-kubelet
+  interval: 12h
+  annotations:
+    fork-per-release: "true"
+    fork-per-release-periodic-interval: 1h 2h 6h 24h
+    testgrid-dashboards: sig-release-master-blocking, sig-node-kubelet
+    testgrid-tab-name: node-kubelet-master
+    testgrid-alert-email: kubernetes-sig-node+testgrid@googlegroups.com
+    description: "Uses kubetest to run a subset of node-e2e tests (+NodeConformance, -Flaky|Serial)"
+  labels:
+    preset-service-account: "true"
+    preset-k8s-ssh: "true"
+  spec:
+    containers:
+    - image: gcr.io/k8s-testimages/kubekins-e2e:v20200422-8c8546d-master
+      args:
+      # NOTE: override default of kubernetes-jenkins
+      - --upload=gs://bashfire-prow/logs
+      - --repo=k8s.io/kubernetes=master
+      - --timeout=200
+      - --root=/go/src
+      - --scenario=kubernetes_e2e
+      - --
+      - --deployment=node
+      - --gcp-project=spiffxp-node-e2e-project
+      - --gcp-zone=us-central1-b
+      - --node-args=--image-config-file=/workspace/test-infra/jobs/e2e_node/image-config.yaml
+      - --node-test-args=--kubelet-flags="--cgroups-per-qos=true --cgroup-root=/"
+      - --node-tests=true
+      - --provider=gce
+      - --test_args=--nodes=8 --focus="\[NodeConformance\]" --skip="\[Flaky\]|\[Serial\]"
+      - --timeout=180m
+      env:
+      - name: GOPATH
+        value: /go
+
+- interval: 12h
+  name: ci-kubernetes-e2e-gci-gce
+  labels:
+    preset-service-account: "true"
+    preset-k8s-ssh: "true"
+  spec:
+    containers:
+    - args:
+      # NOTE: override default of kubernetes-jenkins
+      - --upload=gs://bashfire-prow/logs
+      - --timeout=300
+      - --bare
+      - --scenario=kubernetes_e2e
+      - --
+      - --gcp-project=spiffxp-gce-project
+      - --check-leaked-resources
+      - --env=ENABLE_POD_SECURITY_POLICY=true
+      - --extract=ci/latest
+      - --gcp-master-image=gci
+      - --gcp-node-image=gci
+      - --gcp-nodes=4
+      - --gcp-zone=us-west1-b
+      - --ginkgo-parallel=30
+      - --provider=gce
+      # - --publish=gs://kubernetes-release-dev/ci/latest-green.txt
+      - --test_args=--ginkgo.skip=\[Slow\]|\[Serial\]|\[Disruptive\]|\[Flaky\]|\[Feature:.+\] --minStartupPods=8
+      - --timeout=200m
+      image: gcr.io/k8s-testimages/kubekins-e2e:v20200423-9bf074a-master
+  annotations:
+    testgrid-dashboards: sig-release-master-blocking, google-gce, google-gci
+    testgrid-tab-name: gce-cos-master-default
+    testgrid-num-failures-to-alert: '6'
+    testgrid-alert-email: kubernetes-release-team@googlegroups.com
+    description: Uses kubetest to run e2e tests (-Slow|Serial|Disruptive|Flaky|Feature) against a cluster created with cluster/kube-up.sh
+
+- interval: 12h
+  name: ci-bootstrap-debug
+  labels:
+    preset-service-account: "true"
+    preset-k8s-ssh: "true"
+  spec:
+    containers:
+    - image: gcr.io/k8s-testimages/kubekins-e2e:v20200423-9bf074a-master
+      command:
+        - /bin/bash
+        - -c
+        - |
+          set -o errexit
+          set -o nounset
+          set -o pipefail
+
+          gcloud config list
+          echo
+          env
+          echo
+          ls -l /etc
+          echo
+          ls -l /etc/ssh-key-secret
+          echo
+          cat /etc/ssh-key-secret/ssh-public
+
+          exit
