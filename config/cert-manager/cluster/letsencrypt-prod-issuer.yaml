@@ -1,7 +1,7 @@
-apiVersion: certmanager.k8s.io/v1alpha1
+apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
-  name: letsencrypt-prod
+  name: letsencrypt-prod-issuer
 spec:
   acme:
     # You must replace this email address with your own.
@@ -16,4 +16,5 @@ spec:
     solvers:
     - http01:
         ingress:
-          name: tls-ingress
+          # TODO: this was tls-ingress, should redploy at some point
+          name: prow-ingress

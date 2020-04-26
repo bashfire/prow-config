@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  annotations:
+    acme.cert-manager.io/http01-override-ingress-name: gcsweb-ingress
+    cert-manager.io/issue-temporary-certificate: "true"
+  name: gcsweb-bashfire-dev
+  namespace: gcsweb
+spec:
+  dnsNames:
+  - gcsweb.bashfire.dev
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-prod-issuer
+  secretName: gcsweb-bashfire-dev-tls

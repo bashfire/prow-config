@@ -1,15 +1,15 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   namespace: default
-  name: tls-ingress
+  name: prow-ingress
   annotations:
     kubernetes.io/ingress.class: gce
     kubernetes.io/ingress.global-static-ip-name: prow-bashfire-dev-ip
-    certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+    certmanager.k8s.io/cluster-issuer: letsencrypt-prod-issuer
 spec:
   tls:
-  - secretName: tls-ingress-secret
+  - secretName: prow-bashfire-dev-tls
     hosts:
     - prow.bashfire.dev
   rules:

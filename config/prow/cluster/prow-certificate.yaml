@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  annotations:
+    acme.cert-manager.io/http01-override-ingress-name: prow-ingress
+    cert-manager.io/issue-temporary-certificate: "true"
+  name: prow-bashfire-dev
+  namespace: default
+spec:
+  dnsNames:
+  - prow.bashfire.dev
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-prod-issuer
+  secretName: prow-bashfire-dev-tls
