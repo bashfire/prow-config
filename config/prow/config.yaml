@@ -22,8 +22,8 @@ plank:
       gcs_configuration:
         bucket: bashfire-prow
         path_strategy: explicit
-      # spiffxp-gke-dev-prow@spiffxp-gke-dev.iam.gserviceaccount.com
-      gcs_credentials_secret: gcs-credentials # in test-pods namespace
+      # prow-build-test@kubernetes-public.iam.gserviceaccount.com on kubernetes-public/prow-build-test
+      gcs_credentials_secret: service-account # in test-pods namespace
 
 sinker:
   resync_period: 1m
