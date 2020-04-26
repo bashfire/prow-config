@@ -168,7 +168,7 @@ periodics:
       - --scenario=kubernetes_e2e
       - --
       - --deployment=node
-      - --gcp-project=spiffxp-node-e2e-project
+      - --gcp-project-type=gce-project
       - --gcp-zone=us-central1-b
       - --node-args=--image-config-file=/workspace/test-infra/jobs/e2e_node/image-config.yaml
       - --node-test-args=--kubelet-flags="--cgroups-per-qos=true --cgroup-root=/"
@@ -194,7 +194,7 @@ periodics:
       - --bare
       - --scenario=kubernetes_e2e
       - --
-      - --gcp-project=spiffxp-gce-project
+      - --gcp-project-type=gce-project
       - --check-leaked-resources
       - --env=ENABLE_POD_SECURITY_POLICY=true
       - --extract=ci/latest
