@@ -1,2 +1,2 @@
-config/prow/secrets/* filter=git-crypt diff-git-crypt
-
+config/prow/secrets/*         filter=git-crypt diff=git-crypt
+config/prow/build-secrets/*   filter=git-crypt diff=git-crypt
