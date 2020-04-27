@@ -1,0 +1,31 @@
+postsubmits:
+  bashfire/k8s.io:
+  - name: post-k8sio-audit
+    extra_refs:
+    - org: kubernetes
+      repo: test-infra
+      base_ref: master
+      workdir: false
+    decorate: true
+    skip_report: false
+    optional: true
+    spec:
+      serviceAccountName: k8s-infra-gcp-auditor
+      containers:
+      - image: gcr.io/spiffxp-gke-dev/gcb-docker-gcloud:v20200424-ccb60bd2d
+        command:
+        - /bin/bash
+        args:
+        - -c
+        - |
+          gcloud config list
+          cd audit
+          ./audit-gcp.sh
+          git diff
+          git add --all
+          git commit -m "audit: update as of $(date +%Y-%m-%d)"
+          # TODO: I want to use something like k/test-infra/robots/pr-creator for this, driven by an oauth token secret
+          #       at present, pr-creator doesn't do the push, and assumes test-infra is the repo
+          # push-to user/repo:branch via oath token
+          # git push -f "https://${user}:$(cat "${token}")@github.com/${user}/${repo}" HEAD:${branch} 2>/dev/null
+          # create-or-update pr from user/repo:branch to bashfire/k8s.io:master
