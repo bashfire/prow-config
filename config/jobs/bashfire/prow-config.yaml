@@ -20,32 +20,6 @@ presubmits:
         - --warnings=missing-trigger
         - --warnings=validate-urls
         - --warnings=unknown-fields
-  - name: test-default-cluster-presubmit
-    cluster: default
-    decorate: true
-    always_run: true
-    skip_report: false
-    spec:
-      containers:
-      - image: alpine
-        command: ["/bin/printenv"]
-  - name: test-service-cluster-presubmit
-    cluster: service-cluster
-    decorate: true
-    always_run: true
-    skip_report: false
-    spec:
-      containers:
-      - image: alpine
-        command: ["/bin/printenv"]
-  - name: test-no-cluster-presubmit
-    decorate: true
-    always_run: true
-    skip_report: false
-    spec:
-      containers:
-      - image: alpine
-        command: ["/bin/printenv"]
 
 periodics:
 - interval: 10m
@@ -58,7 +32,7 @@ periodics:
 
 postsubmits:
   bashfire/prow-config:
-  - name: test-postsubmit
+  - name: post-prow-config
     decorate: true
     spec:
       containers:
