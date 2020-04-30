@@ -1,6 +1,7 @@
 presubmits:
   bashfire/prow-config:
   - name: pull-prow-config-checkconfig
+    cluster: k8s-infra-prow-build
     decorate: true
     run_if_changed: '^(config/prow/(config|plugins).yaml$|config/jobs/.*.yaml$)'
     optional: true
@@ -24,6 +25,7 @@ presubmits:
 periodics:
 - interval: 10m
   name: echo-test
+  cluster: k8s-infra-prow-build
   decorate: true
   spec:
     containers:
@@ -33,6 +35,7 @@ periodics:
 postsubmits:
   bashfire/prow-config:
   - name: post-prow-config
+    cluster: k8s-infra-prow-build
     decorate: true
     spec:
       containers:
