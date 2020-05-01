@@ -23,6 +23,14 @@ presubmits:
 
 periodics:
 - interval: 10m
+  cluster: k8s-infra-prow-build-trusted
+  name: echo-test-trusted
+  decorate: true
+  spec:
+    containers:
+    - image: alpine
+      command: ["/bin/date"]
+- interval: 10m
   name: echo-test
   decorate: true
   spec:
