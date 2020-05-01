@@ -44,6 +44,7 @@ presets:
 
 periodics:
 - name: ci-kubernetes-node-kubelet
+  cluster: k8s-infra-prow-build
   interval: 1h
   annotations:
     fork-per-release: "true"
@@ -81,6 +82,7 @@ periodics:
 
 - interval: 1h
   name: ci-kubernetes-e2e-gci-gce
+  cluster: k8s-infra-prow-build
   labels:
     preset-service-account: "true"
     preset-k8s-ssh: "true"
