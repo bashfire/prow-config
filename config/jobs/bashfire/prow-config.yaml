@@ -1,7 +1,7 @@
 presubmits:
   bashfire/prow-config:
   - name: pull-prow-config-checkconfig
-    cluster: k8s-infra-prow-build
+    cluster: prow-build-test
     decorate: true
     run_if_changed: '^(config/prow/(config|plugins).yaml$|config/jobs/.*.yaml$)'
     optional: true
@@ -22,28 +22,10 @@ presubmits:
         - --warnings=validate-urls
         - --warnings=unknown-fields
 
-periodics:
-- interval: 10m
-  cluster: k8s-infra-prow-build-trusted
-  name: echo-test-trusted
-  decorate: true
-  spec:
-    containers:
-    - image: alpine
-      command: ["/bin/date"]
-- interval: 10m
-  name: echo-test
-  cluster: k8s-infra-prow-build
-  decorate: true
-  spec:
-    containers:
-    - image: alpine
-      command: ["/bin/date"]
-
 postsubmits:
   bashfire/prow-config:
   - name: post-prow-config
-    cluster: k8s-infra-prow-build
+    cluster: prow-build-test
     decorate: true
     spec:
       containers:
