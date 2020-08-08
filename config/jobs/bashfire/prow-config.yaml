@@ -22,6 +22,16 @@ presubmits:
         - --warnings=validate-urls
         - --warnings=unknown-fields
 
+periodics:
+- interval: 5m
+  cluster: prow-build-test
+  name: echo-test
+  decorate: true
+  spec:
+    containers:
+    - image: alpine
+      command: ["/bin/date"]
+
 postsubmits:
   bashfire/prow-config:
   - name: post-prow-config
