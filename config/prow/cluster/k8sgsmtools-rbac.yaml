@@ -1,13 +1,15 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  namespace: default
-  name: "ks8-gsm-tools"
+  namespace: k8s-gsm-tools
+  name: k8s-gsm-tools
+  annotations: 
+    iam.gke.io/gcp-service-account: k8s-gsm-tools@spiffxp-gke-dev.iam.gserviceaccount.com  
 ---
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: "ks8-gsm-tools"
+  name: k8s-gsm-tools
 rules:
 - apiGroups: [""]
   resources: ["secrets"]
@@ -22,12 +24,12 @@ rules:
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
- name: "ks8-gsm-tools"
+  name: k8s-gsm-tools
 subjects:
 - kind: ServiceAccount
-  namespace: default
-  name: "ks8-gsm-tools"
+  namespace: k8s-gsm-tools
+  name: k8s-gsm-tools
 roleRef:
- kind: ClusterRole
- name: "ks8-gsm-tools"
- apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: k8s-gsm-tools
+  apiGroup: rbac.authorization.k8s.io
