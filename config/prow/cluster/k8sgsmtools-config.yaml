@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: k8s-gsm-tools
+  name: config
+data:
+  rotConfig: |
+    specs:
+    - project: spiffxp-gke-dev
+      secret: service-account
+      type:
+        serviceAccountKey:
+          project: spiffxp-gke-dev
+          serviceAccount: spiffxp-gke-dev-prow
+      refreshStrategy:
+        interval: 10m
+      gracePeriod: 5m
+
+  syncConfig: |
+    specs:
+    - source: 
+        project: spiffxp-gke-dev
+        secret: service-account
+      destination:
+        namespace: test-pods
+        secret: service-account
+        key: service-account.json
