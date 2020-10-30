@@ -21,6 +21,20 @@ presubmits:
         - --warnings=missing-trigger
         - --warnings=validate-urls
         - --warnings=unknown-fields
+  - name: pull-prow-dind-experiment
+    cluster: prow-build-test
+    decorate: true
+    always_run: false
+    optional: true
+    spec:
+      containers:
+      - image: gcr.io/k8s-testimages/kubekins-e2e:latest-master
+        command:
+        - /bin/bash
+        args:
+        - -c
+        - docker system info
+
 
 periodics:
 - interval: 5m
