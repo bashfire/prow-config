@@ -33,8 +33,7 @@ presubmits:
         - /bin/bash
         args:
         - -c
-        - docker system info
-
+        - echo monkeys
 
 periodics:
 - interval: 5m
